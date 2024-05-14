@@ -10,12 +10,15 @@
 
 * 60% - тестов пройдено успешно,
 * 40% - провалены
+![3](https://github.com/skatt32/diplom/assets/148701884/07ca3913-8f6f-4613-9285-3fd806395a26)
+![4](https://github.com/skatt32/diplom/assets/148701884/31600a6e-a2c1-4c65-9962-32e90abb1c6b)
 
 При подключении к СУБД PostgreSQL
 
 * 40% - тестов пройдено успешно,
 * 60% - провалены
-
+ ![1](https://github.com/skatt32/diplom/assets/148701884/4f9bed8b-562e-4442-b4ac-aae4bf7c4235)
+![2](https://github.com/skatt32/diplom/assets/148701884/cf3d95a5-fe4b-44b0-9145-a4925ab8f0f7)
 В итоге занесено 7 баг-репортов (1 дефект был обнаружен при иследовательском ручном тестировании)
 Отчеты можно сгенерировать с помощью Gradle, Allure командой
 ./gradlew clean test --info и затем после заверешения ./gradlew allureserve
