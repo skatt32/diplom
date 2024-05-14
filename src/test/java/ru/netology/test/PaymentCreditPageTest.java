@@ -1,21 +1,11 @@
-package test;
+package ru.netology.test;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.codeborne.selenide.junit5.TextReportExtension;
 import io.qameta.allure.selenide.AllureSelenide;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import ru.netology.data.DataHelper;
 import ru.netology.data.SQLHelper;
-import ru.netology.page.CreditPage;
 import ru.netology.page.MainPage;
-import io.qameta.allure.Allure;
-import ru.netology.page.PaymentPage;
-
-import java.util.concurrent.TimeUnit;
-
-import static com.codeborne.selenide.Selenide.open;
-import static ru.netology.data.SQLHelper.getLastPayUserStatusMySQL;
 
 public class PaymentCreditPageTest {
 
@@ -220,7 +210,6 @@ public class PaymentCreditPageTest {
         Assertions.assertEquals("APPROVED", CreditStatus);
 
     }
-
     @Test
     @DisplayName("Should get PostgreSQL status when pay on credit from DECLINED card")
     void shouldGetPostgreSQLStatusWhenPayOnCreditFromDeclinedCard() {
