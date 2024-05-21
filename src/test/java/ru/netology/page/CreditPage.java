@@ -10,8 +10,8 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class CreditPage {
     private final SelenideElement cardNumberField = $("[placeholder='0000 0000 0000 0000']");
-    private final SelenideElement monthField = $("[placeholder='08']");
-    private final SelenideElement yearField = $("[placeholder='22']");
+    private final SelenideElement monthField = $("[placeholder='05']");
+    private final SelenideElement yearField = $("[placeholder='24']");
     private final SelenideElement cardHolderField = $$("fieldset input").get(3);
     private final SelenideElement cvcField = $("[placeholder='999']");
     private final SelenideElement continueButton = $("fieldset button");
@@ -20,24 +20,16 @@ public class CreditPage {
     private final SelenideElement emptyFieldNotification = $x("//*[contains(text(),'Поле обязательно для заполнения')]");
     //"]"
 
-    public CreditPage validPayCard(DataHelper.CardInfo info) {
+    public CreditPage validPayCardAndInValidPayCard(DataHelper.CardInfo info) {
         cardNumberField.setValue(info.getCardNumber());
-        monthField.setValue(DataHelper.generateRandomMonth());
-        yearField.setValue(DataHelper.generateRandomYear());
+        monthField.setValue(DataHelper.generateMonth());
+        yearField.setValue(DataHelper.generateYear());
         cardHolderField.setValue(DataHelper.generateFullName());
         cvcField.setValue(DataHelper.generateCvc());
         continueButton.click();
         return new CreditPage();
     }
-    public CreditPage inValidPayCard(DataHelper.CardInfo info) {
-        cardNumberField.setValue(DataHelper.generateCardNumber());
-        monthField.setValue(DataHelper.generateRandomMonth());
-        yearField.setValue(DataHelper.generateRandomYear());
-        cardHolderField.setValue(DataHelper.generateFullName());
-        cvcField.setValue(DataHelper.generateCvc());
-        continueButton.click();
-        return new CreditPage();
-    }
+
     public PaymentPage emptyField(DataHelper.CardInfo info) {
         continueButton.click();
         return new PaymentPage();

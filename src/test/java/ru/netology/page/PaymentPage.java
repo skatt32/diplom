@@ -20,19 +20,10 @@ public class PaymentPage {
     private final SelenideElement errorNotification = $x("//*[contains(text(),'Ошибка! Банк отказал в проведении операции.')]");
     private final SelenideElement emptyFieldNotification = $x("//*[contains(text(),'Поле обязательно для заполнения')]");
 
-    public PaymentPage validPayCard(DataHelper.CardInfo info) {
+    public PaymentPage validPayCardAndInValidPayCard(DataHelper.CardInfo info) {
         cardNumberField.setValue(info.getCardNumber());
-        monthField.setValue(DataHelper.generateRandomMonth());
-        yearField.setValue(DataHelper.generateRandomYear());
-        cardHolderField.setValue(DataHelper.generateFullName());
-        cvcField.setValue(DataHelper.generateCvc());
-        continueButton.click();
-        return new PaymentPage();
-    }
-    public PaymentPage inValidPayCard(DataHelper.CardInfo info) {
-        cardNumberField.setValue(DataHelper.generateCardNumber());
-        monthField.setValue(DataHelper.generateRandomMonth());
-        yearField.setValue(DataHelper.generateRandomYear());
+        monthField.setValue(DataHelper.generateMonth());
+        yearField.setValue(DataHelper.generateYear());
         cardHolderField.setValue(DataHelper.generateFullName());
         cvcField.setValue(DataHelper.generateCvc());
         continueButton.click();

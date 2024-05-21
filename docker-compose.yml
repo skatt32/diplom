@@ -5,19 +5,15 @@ services:
     image: node-app-1
     ports:
       - "9999:9999"
-
-
-
-
   postgres:
     image: postgres
     restart: always
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
     ports:
       - '5432:5432'
-
   mysql:
     image: mysql:8.0.18
     restart: always

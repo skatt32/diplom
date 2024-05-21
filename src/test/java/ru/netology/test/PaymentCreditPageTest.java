@@ -23,7 +23,7 @@ public class PaymentCreditPageTest {
     void shouldSuccessfullyPayFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
         PaymentPage.verifySuccessPayVisibility();
     }
 
@@ -32,7 +32,7 @@ public class PaymentCreditPageTest {
     void shouldShowErrorWhenPayFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
         PaymentPage.verifyDeclinePayVisibility();
     }
 
@@ -42,7 +42,7 @@ public class PaymentCreditPageTest {
     void shouldSuccessfullyРayОnСreditFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
         CreditPage.verifySuccessPayVisibility();
     }
 
@@ -51,7 +51,7 @@ public class PaymentCreditPageTest {
     void shouldShowErrorWhenPayОnСreditFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
         CreditPage.verifyDeclinePayVisibility();
     }
 
@@ -79,7 +79,7 @@ public class PaymentCreditPageTest {
     void shouldShowErrorWhenPayCardWithInvalidCardNumber() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.inValidPayCard(CardInfo);
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
         PaymentPage.verifyDeclinePayVisibility();
     }
 
@@ -88,7 +88,7 @@ public class PaymentCreditPageTest {
     void shouldShowErrorWhenОnСreditCardWithInvalidCardNumber() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.inValidPayCard(CardInfo);
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
         CreditPage.verifyDeclinePayVisibility();
     }
 
@@ -97,8 +97,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getLastPayUserStatusMySQL();
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("APPROVED", PaymentStatus);
 
     }
@@ -108,8 +108,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusAmountWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getLastPayUserAmountMySQL());
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentAmount = (SQLHelper.getPaymentStatus());
         Assertions.assertEquals(45000, PaymentAmount);
     }
 
@@ -118,8 +118,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusWhenPayFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getLastPayUserStatusMySQL();
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("DECLINED", PaymentStatus);
 
     }
@@ -129,8 +129,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusAndRightAmountWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getLastPayUserAmountMySQL());
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentAmount = (SQLHelper.getPaymentStatus());
         Assertions.assertEquals(0, PaymentAmount);
 
     }
@@ -140,8 +140,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusWhenPayOnCreditFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getLastPayOnCreditUserStatusMySQL();
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
+        var CreditStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("APPROVED", CreditStatus);
 
     }
@@ -151,8 +151,8 @@ public class PaymentCreditPageTest {
     void shouldGetMySQLStatusWhenPayOnCreditFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getLastPayOnCreditUserStatusMySQL();
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
+        var CreditStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("DECLINED", CreditStatus);
 
     }
@@ -162,8 +162,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getLastPayUserStatusPostgreSQL();
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("APPROVED", PaymentStatus);
 
     }
@@ -173,8 +173,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusAmountWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getLastPayUserAmountPostgreSQL());
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentAmount = (SQLHelper.getPaymentStatus());
         Assertions.assertEquals(45000, PaymentAmount);
     }
 
@@ -183,8 +183,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusWhenPayFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getLastPayUserStatusPostgreSQL();
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("DECLINED", PaymentStatus);
 
     }
@@ -194,8 +194,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusAndRightAmountWhenPayFromApprovedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getLastPayUserAmountPostgreSQL());
+        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
+        var PaymentAmount = (SQLHelper.getPaymentStatus());
         Assertions.assertEquals(0, PaymentAmount);
 
     }
@@ -205,8 +205,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusWhenPayOnCreditFromApprovedCard() {
         var CardInfo = DataHelper.getFirstCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getLastPayOnCreditUserStatusPostgreSQL();
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
+        var CreditStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("APPROVED", CreditStatus);
 
     }
@@ -215,8 +215,8 @@ public class PaymentCreditPageTest {
     void shouldGetPostgreSQLStatusWhenPayOnCreditFromDeclinedCard() {
         var CardInfo = DataHelper.getSecondCardNumberAndStatus();
         var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getLastPayOnCreditUserStatusPostgreSQL();
+        CreditPage.validPayCardAndInValidPayCard(CardInfo);
+        var CreditStatus = SQLHelper.getPaymentStatus();
         Assertions.assertEquals("DECLINED", CreditStatus);
 
     }

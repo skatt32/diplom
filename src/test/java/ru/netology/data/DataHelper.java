@@ -2,12 +2,10 @@ package ru.netology.data;
 
 
 import com.github.javafaker.Faker;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 
@@ -31,18 +29,12 @@ public class DataHelper {
         return LocalDate.now().plusMonths(14);
     }
 
-    public static String generateRandomMonth() {
-        String text = String.valueOf((generateValidDate()));
-        char charAtFive = text.charAt(5);
-        char charAtSix = text.charAt(6);
-        return String.valueOf(charAtFive) + String.valueOf(charAtSix);
-    }
+    public static String generateMonth() {
 
-    public static String generateRandomYear() {
-        String text = String.valueOf((generateValidDate()));
-        char charAtTwo = text.charAt(2);
-        char charAtThree = text.charAt(3);
-        return String.valueOf(charAtTwo) + String.valueOf(charAtThree);
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
+    }
+    public static String generateYear() {
+        return LocalDate.now().format(DateTimeFormatter.ofPattern("yy"));
     }
 
     public static String generateFullName() {
@@ -61,25 +53,6 @@ public class DataHelper {
 
     @Value
     public static class CardInfo {
-        private String cardNumber;
-        private String status;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class UserData {
-
-        public String cardNumber;
-        private String month;
-        private String year;
-        private String nameSurname;
-        private String cvc;
-
-    }
-
-    @Value
-    public static class SQL {
         private String cardNumber;
         private String status;
     }
