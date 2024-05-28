@@ -20,19 +20,19 @@ public class CreditPage {
     private final SelenideElement emptyFieldNotification = $x("//*[contains(text(),'Поле обязательно для заполнения')]");
     //"]"
 
-    public CreditPage validPayCardAndInValidPayCard(DataHelper.CardInfo info) {
+    public void validPayCardAndInValidPayCard(DataHelper.CardInfo info) {
         cardNumberField.setValue(info.getCardNumber());
         monthField.setValue(DataHelper.generateMonth());
         yearField.setValue(DataHelper.generateYear());
         cardHolderField.setValue(DataHelper.generateFullName());
         cvcField.setValue(DataHelper.generateCvc());
         continueButton.click();
-        return new CreditPage();
+
     }
 
-    public PaymentPage emptyField(DataHelper.CardInfo info) {
+    public void emptyField(DataHelper.CardInfo info) {
         continueButton.click();
-        return new PaymentPage();
+
     }
 
     public void verifySuccessPayVisibility() {
