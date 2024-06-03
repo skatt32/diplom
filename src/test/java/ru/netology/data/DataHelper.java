@@ -17,6 +17,7 @@ public class DataHelper {
 
     private static Faker faker = new Faker(new Locale("ru"));
 
+
     public static CardInfo getFirstCardNumberAndStatus() {
         return new CardInfo("4444 4444 4444 4441", "APPROVED");
     }

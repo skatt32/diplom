@@ -30,10 +30,6 @@ public class CreditPage {
 
     }
 
-    public void emptyField(DataHelper.CardInfo info) {
-        continueButton.click();
-
-    }
 
     public void verifySuccessPayVisibility() {
         successNotification.shouldBe(visible, Duration.ofSeconds(10));

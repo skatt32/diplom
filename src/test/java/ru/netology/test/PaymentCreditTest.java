@@ -7,7 +7,16 @@ import ru.netology.data.DataHelper;
 import ru.netology.data.SQLHelper;
 import ru.netology.page.MainPage;
 
+import static com.codeborne.selenide.Selenide.open;
+
 public class PaymentCreditTest {
+    private static String appUrl = System.getProperty("sut.url");
+
+    @BeforeEach
+    public void setUp2() {
+        open(appUrl, MainPage.class);
+        SQLHelper.cleanDataBase();
+    }
 
     @BeforeAll
     static void setUpAll() {
@@ -21,79 +30,78 @@ public class PaymentCreditTest {
     @Test
     @DisplayName("Should successfully pay on credit from APPROVED card")
     void shouldSuccessfullyРayОnСreditFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        CreditPage.verifySuccessPayVisibility();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        creditPage.verifySuccessPayVisibility();
     }
 
     @Test
     @DisplayName("Should show error message when pay on credit from DECLINED card")
     void shouldShowErrorWhenPayОnСreditFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        CreditPage.verifyDeclinePayVisibility();
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        creditPage.verifyDeclinePayVisibility();
     }
 
     @Test
     @DisplayName("Should show error message when pay on credit and cardnumber field empty")
     void shouldShowErrorWhenPayОnСreditAndCardNumberFieldEmpty() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.emptyField(CardInfo);
-        CreditPage.verifyEmptyField();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.verifyEmptyField();
     }
 
     @Test
     @DisplayName("Should show error message when pay on credit with invalid cardnumber ")
     void shouldShowErrorWhenОnСreditCardWithInvalidCardNumber() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        CreditPage.verifyDeclinePayVisibility();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        creditPage.verifyDeclinePayVisibility();
     }
 
     @Test
     @DisplayName("Should get MySQL status when pay on credit from APPROVED card")
     void shouldGetMySQLStatusWhenPayOnCreditFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("APPROVED", CreditStatus);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        var creditStatus = SQLHelper.getCreditStatus();
+        Assertions.assertEquals("APPROVED", creditStatus);
 
     }
 
     @Test
     @DisplayName("Should get MySQL status when pay on credit from DECLINED card")
     void shouldGetMySQLStatusWhenPayOnCreditFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("DECLINED", CreditStatus);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        var creditStatus = SQLHelper.getCreditStatus();
+        Assertions.assertEquals("DECLINED", creditStatus);
 
     }
 
     @Test
     @DisplayName("Should get PostgreSQL status when pay on credit from APPROVED card")
     void shouldGetPostgreSQLStatusWhenPayOnCreditFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("APPROVED", CreditStatus);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        var creditStatus = SQLHelper.getCreditStatus();
+        Assertions.assertEquals("APPROVED", creditStatus);
 
     }
     @Test
     @DisplayName("Should get PostgreSQL status when pay on credit from DECLINED card")
     void shouldGetPostgreSQLStatusWhenPayOnCreditFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var CreditPage = MainPage.openCreditPage(CardInfo);
-        CreditPage.validPayCardAndInValidPayCard(CardInfo);
-        var CreditStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("DECLINED", CreditStatus);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var creditPage = MainPage.openCreditPage(cardInfo);
+        creditPage.validPayCardAndInValidPayCard(cardInfo);
+        var creditStatus = SQLHelper.getCreditStatus();
+        Assertions.assertEquals("DECLINED", creditStatus);
 
     }
 

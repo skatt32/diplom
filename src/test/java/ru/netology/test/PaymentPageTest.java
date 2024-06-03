@@ -7,7 +7,17 @@ import ru.netology.data.DataHelper;
 import ru.netology.data.SQLHelper;
 import ru.netology.page.MainPage;
 
+import static com.codeborne.selenide.Selenide.open;
+
 public class PaymentPageTest {
+    private static String appUrl = System.getProperty("sut.url");
+
+    @BeforeEach
+    public void setUp2() {
+        open(appUrl, MainPage.class);
+        SQLHelper.cleanDataBase();
+    }
+
     @BeforeAll
     static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
@@ -19,116 +29,115 @@ public class PaymentPageTest {
     @Test
     @DisplayName("Should successfully pay from APPROVED card")
     void shouldSuccessfullyPayFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        PaymentPage.verifySuccessPayVisibility();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        paymentPage.verifySuccessPayVisibility();
     }
 
     @Test
     @DisplayName("Should show error message when pay from DECLINED card")
     void shouldShowErrorWhenPayFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        PaymentPage.verifyDeclinePayVisibility();
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        paymentPage.verifyDeclinePayVisibility();
     }
     @Test
     @DisplayName("Should show error message when pay card and cardnumber field empty")
     void shouldShowErrorWhenPayCardAndCardNumberFieldEmpty() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.emptyField(CardInfo);
-        PaymentPage.verifyEmptyField();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.verifyEmptyField();
     }
     @Test
     @DisplayName("Should show error message when pay card with invalid cardnumber ")
     void shouldShowErrorWhenPayCardWithInvalidCardNumber() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        PaymentPage.verifyDeclinePayVisibility();
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        paymentPage.verifyDeclinePayVisibility();
     }
     @Test
     @DisplayName("Should get MySQL status when pay from APPROVED card")
     void shouldGetMySQLStatusWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("APPROVED", PaymentStatus);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentStatus = SQLHelper.getPaymentStatus();
+        Assertions.assertEquals("APPROVED", paymentStatus);
     }
     @Test
     @DisplayName("Should get MySQL amount when pay from APPROVED card")
     void shouldGetMySQLStatusAmountWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getPaymentStatus());
-        Assertions.assertEquals(45000, PaymentAmount);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentAmount = (SQLHelper.getPaymentStatus());
+        Assertions.assertEquals(4500000, paymentAmount);
     }
 
     @Test
     @DisplayName("Should get MySQL status when pay from DECLINED card")
     void shouldGetMySQLStatusWhenPayFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("DECLINED", PaymentStatus);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentStatus = SQLHelper.getPaymentStatus();
+        Assertions.assertEquals("DECLINED", paymentStatus);
 
     }
 
     @Test
     @DisplayName("Should get MySQL amount when pay from DECLINED card")
     void shouldGetMySQLStatusAndRightAmountWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getPaymentStatus());
-        Assertions.assertEquals(0, PaymentAmount);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentAmount = (SQLHelper.getPaymentStatus());
+        Assertions.assertEquals(0, paymentAmount);
 
     }
     @Test
     @DisplayName("Should get PostgreSQL status when pay from APPROVED card")
     void shouldGetPostgreSQLStatusWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("APPROVED", PaymentStatus);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentStatus = SQLHelper.getPaymentStatus();
+        Assertions.assertEquals("APPROVED", paymentStatus);
 
     }
 
     @Test
     @DisplayName("Should get PostgreSQL amount when pay from APPROVED card")
     void shouldGetPostgreSQLStatusAmountWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getPaymentStatus());
-        Assertions.assertEquals(45000, PaymentAmount);
+        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentAmount = (SQLHelper.getPaymentStatus());
+        Assertions.assertEquals(4500000, paymentAmount);
     }
 
     @Test
     @DisplayName("Should get PostgreSQL status when pay from DECLINED card")
     void shouldGetPostgreSQLStatusWhenPayFromDeclinedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentStatus = SQLHelper.getPaymentStatus();
-        Assertions.assertEquals("DECLINED", PaymentStatus);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentStatus = SQLHelper.getPaymentStatus();
+        Assertions.assertEquals("DECLINED", paymentStatus);
 
     }
 
     @Test
     @DisplayName("Should get PostgreSQL amount when pay from DECLINED card")
     void shouldGetPostgreSQLStatusAndRightAmountWhenPayFromApprovedCard() {
-        var CardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var PaymentPage = MainPage.openPaymentPage(CardInfo);
-        PaymentPage.validPayCardAndInValidPayCard(CardInfo);
-        var PaymentAmount = (SQLHelper.getPaymentStatus());
-        Assertions.assertEquals(0, PaymentAmount);
+        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
+        var paymentPage = MainPage.openPaymentPage(cardInfo);
+        paymentPage.validPayCardAndInValidPayCard(cardInfo);
+        var paymentAmount = (SQLHelper.getPaymentStatus());
+        Assertions.assertEquals(0, paymentAmount);
 
     }
 
