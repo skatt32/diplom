@@ -1,24 +1,27 @@
 package ru.netology.page;
 
 import com.codeborne.selenide.SelenideElement;
-import ru.netology.data.DataHelper;
-
-import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
-    private static final SelenideElement buyButton = $(".button_size_m");
-    private static final SelenideElement buyCreditButton = $(".button_view_extra");
 
+    private SelenideElement heading = $$("h2").find(exactText("Путешествие дня"));
+    private SelenideElement payButton = $$("button").find(exactText("Купить"));
+    private SelenideElement creditButton = $$("button").find(exactText("Купить в кредит"));
 
-    public static PaymentPage openPaymentPage(DataHelper.CardInfo info) {
-        buyButton.click();
+    public MainPage() {
+        heading.shouldBe(visible);
+    }
+
+    public PaymentPage openBuyPage() {
+        payButton.click();
         return new PaymentPage();
     }
 
-    public static CreditPage openCreditPage(DataHelper.CardInfo info) {
-        buyCreditButton.click();
+    public CreditPage openCreditPage() {
+        creditButton.click();
         return new CreditPage();
     }
-
-
 }

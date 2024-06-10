@@ -1,45 +1,59 @@
 package ru.netology.page;
 
 import com.codeborne.selenide.SelenideElement;
-import ru.netology.data.DataHelper;
+import ru.netology.data.CardInfo;
 
 import java.time.Duration;
 
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
+
 
 public class PaymentPage {
-    private final SelenideElement cardNumberField = $("[placeholder='0000 0000 0000 0000']");
-    private final SelenideElement monthField = $("[placeholder='08']");
-    private final SelenideElement yearField = $("[placeholder='22']");
-    private final SelenideElement cardHolderField = $$("fieldset input").get(3);
-    private final SelenideElement cvcField = $("[placeholder='999']");
-    private final SelenideElement continueButton = $("fieldset button");
-    private final SelenideElement successNotification = $x("//*[contains(text(),'Операция одобрена Банком')]");
-    private final SelenideElement errorNotification = $x("//*[contains(text(),'Ошибка! Банк отказал в проведении операции.')]");
-    private final SelenideElement emptyFieldNotification = $x("//*[contains(text(),'Поле обязательно для заполнения')]");
+    private SelenideElement heading = $$("h3").find(exactText("Оплата по карте"));
+    private SelenideElement cardNumberField = $(byText("Номер карты")).parent().$("[class=\"input__control\"]");
+    private SelenideElement monthField = $(byText("Месяц")).parent().$("[class=\"input__control\"]");
+    private SelenideElement yearField = $(byText("Год")).parent().$("[class=\"input__control\"]");
+    private SelenideElement cardNameField = $(byText("Владелец")).parent().$("[class=\"input__control\"]");
+    private SelenideElement cvcField = $(byText("CVC/CVV")).parent().$("[class=\"input__control\"]");
+    private SelenideElement continueButton = $$("button").find(exactText("Продолжить"));
+    private SelenideElement operationApproved = $(byText("Операция одобрена Банком.")).parent().$("[class=\"notification__content\"]");
+    private SelenideElement error = $(byText("Ошибка! Банк отказал в проведении операции.")).parent().$("[class=\"notification__content\"]");
+    private SelenideElement invalidFormat = $(byText("Неверный формат"));
+    private SelenideElement invalidDataCard = $(byText("Неверно указан срок действия карты"));
+    private SelenideElement cardExpired = $(byText("Истёк срок действия карты"));
+    private SelenideElement invalidMassege = $(".input__sub");
 
-    public void validPayCardAndInValidPayCard(DataHelper.CardInfo info) {
-        cardNumberField.setValue(info.getCardNumber());
-        monthField.setValue(DataHelper.generateMonth());
-        yearField.setValue(DataHelper.generateYear());
-        cardHolderField.setValue(DataHelper.generateFullName());
-        cvcField.setValue(DataHelper.generateCvc());
+    public PaymentPage() {
+        heading.shouldBe(visible);
+    }
+    public void completedForm(CardInfo card) {
+        cardNumberField.setValue(card.getNumber());
+        monthField.setValue(card.getMonth());
+        yearField.setValue(card.getYear());
+        cardNameField.setValue(card.getName());
+        cvcField.setValue(card.getCvc());
         continueButton.click();
-
     }
-
-    public void verifySuccessPayVisibility() {
-        successNotification.shouldBe(visible, Duration.ofSeconds(10));
+    public void expectationOperationApproved() {
+        operationApproved.shouldBe(visible, Duration.ofMillis(15000));
     }
-
-    public void verifyDeclinePayVisibility() {
-        errorNotification.shouldBe(visible, Duration.ofSeconds(10));
-
+    public void expectationError() {
+        error.shouldBe(visible, Duration.ofMillis(15000));
     }
-
-    public void verifyEmptyField() {
-        emptyFieldNotification.shouldBe(visible, Duration.ofSeconds(10));
+    public void expectationInvalidFormat() {
+        invalidFormat.shouldBe(visible);
+    }
+    public void expectationInvalidDataCard() {
+        invalidDataCard.shouldBe(visible);
+    }
+    public void expectationCardExpired() {
+        cardExpired.shouldBe(visible);
+    }
+    public String getInvalidText() {
+        return invalidMassege.getText();
     }
 }

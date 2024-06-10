@@ -2,60 +2,104 @@ package ru.netology.data;
 
 
 import com.github.javafaker.Faker;
-import lombok.Value;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 
 public class DataHelper {
-
     private DataHelper() {
     }
-
-
-    private static Faker faker = new Faker(new Locale("ru"));
-
-
-    public static CardInfo getFirstCardNumberAndStatus() {
-        return new CardInfo("4444 4444 4444 4441", "APPROVED");
+    private static String getApprovedNumberCard() {
+        return ("4444 4444 4444 4441");
     }
 
-    public static CardInfo getSecondCardNumberAndStatus() {
-        return new CardInfo("4444 4444 4444 4442", "DECLINED");
+    private static String getDeclinedNumberCard() {
+        return ("4444 4444 4444 4442");
     }
 
-    public static LocalDate generateValidDate() {
-        return LocalDate.now().plusMonths(14);
+    public static String getMonth(int shift) {
+        String month = LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM"));
+        return month;
     }
 
-    public static String generateMonth() {
-
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
+    public static String getYear(int shift) {
+        String year = LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("YY"));
+        return year;
     }
-    public static String generateYear() {
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("yy"));
+    public static String getName() {
+        Faker faker = new Faker();
+        String name = faker.name().firstName() + " " + faker.name().lastName();
+        return name;
     }
-
-    public static String generateFullName() {
-        return faker.name().firstName().replaceAll("ё", "е") + " "
-                + faker.name().lastName().replaceAll("ё", "е");
+    public static String getCvc() {
+        Faker faker = new Faker();
+        String code = faker.number().digits(3);
+        return code;
     }
-
-    public static String generateCvc() {
-        return faker.number().digits(3);
+    public static CardInfo getApprovedCard() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), getName(), getCvc());
     }
-
-    public static String generateCardNumber() {
-        return faker.business().creditCardNumber();
+    public static CardInfo getDeclinedCard() {
+        return new CardInfo(getDeclinedNumberCard(), getMonth(0), getYear(0), getName(), getCvc());
     }
-
-
-    @Value
-    public static class CardInfo {
-        private String cardNumber;
-        private String status;
+    public static CardInfo getEmptyForm() {
+        return new CardInfo("", "", "", "", "");
     }
 
+    public static CardInfo getDateLastMonth() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(-1), getYear(0), getName(), getCvc());
+    }
+
+    public static CardInfo getDateNonExistentMonth() {
+        return new CardInfo(getApprovedNumberCard(), "13", getYear(0), getName(), getCvc());
+    }
+
+    public static CardInfo getDateOneSymbolIntMonth() {
+        return new CardInfo(getApprovedNumberCard(), "1", getYear(0), getName(), getCvc());
+    }
+
+    public static CardInfo getDatePastYear() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(-1), getName(), getCvc());
+    }
+
+    public static CardInfo getDateNextYear() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(6), getName(), getCvc());
+    }
+
+    public static CardInfo getDateOneSymbolIntYear() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), "1", getName(), getCvc());
+    }
+
+    public static CardInfo getNameCyrillic() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), "Дмитрий", getCvc());
+    }
+
+    public static CardInfo getNameSpecialSymbol() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), "!@#$%^", getCvc());
+    }
+
+    public static CardInfo getNameNumbers() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), "12345", getCvc());
+    }
+
+    public static CardInfo getNameManySymbol() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), "аааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааа", getCvc());
+    }
+
+    public static CardInfo getCard15Numbers() {
+        return new CardInfo(("444444444444444"), getMonth(0), getYear(0), getName(), getCvc());
+    }
+
+    public static CardInfo getCardAllZero() {
+        return new CardInfo(("0000000000000000"), getMonth(0), getYear(0), getName(), getCvc());
+    }
+
+    public static CardInfo getCvcAllZero() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), getName(), ("000"));
+    }
+
+    public static CardInfo getCvcOneNumber() {
+        return new CardInfo(getApprovedNumberCard(), getMonth(0), getYear(0), getName(), ("1"));
+    }
 }

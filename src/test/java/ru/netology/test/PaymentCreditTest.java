@@ -4,20 +4,12 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import ru.netology.data.DataHelper;
-import ru.netology.data.SQLHelper;
+import ru.netology.data.SqlHelper;
+import ru.netology.page.CreditPage;
 import ru.netology.page.MainPage;
-
 import static com.codeborne.selenide.Selenide.open;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PaymentCreditTest {
-    private static String appUrl = System.getProperty("sut.url");
-
-    @BeforeEach
-    public void setUp2() {
-        open(appUrl, MainPage.class);
-        SQLHelper.cleanDataBase();
-    }
-
     @BeforeAll
     static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
@@ -26,83 +18,166 @@ public class PaymentCreditTest {
     static void tearDownAll() {
         SelenideLogger.removeListener("allure");
     }
-
-    @Test
-    @DisplayName("Should successfully pay on credit from APPROVED card")
-    void shouldSuccessfullyРayОnСreditFromApprovedCard() {
-        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        creditPage.verifySuccessPayVisibility();
+    @BeforeEach
+    public void setUp() {
+        String url = System.getProperty("sut.url");
+        open(url);
     }
-
-    @Test
-    @DisplayName("Should show error message when pay on credit from DECLINED card")
-    void shouldShowErrorWhenPayОnСreditFromDeclinedCard() {
-        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        creditPage.verifyDeclinePayVisibility();
-    }
-
-    @Test
-    @DisplayName("Should show error message when pay on credit and cardnumber field empty")
-    void shouldShowErrorWhenPayОnСreditAndCardNumberFieldEmpty() {
-        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.verifyEmptyField();
-    }
-
-    @Test
-    @DisplayName("Should show error message when pay on credit with invalid cardnumber ")
-    void shouldShowErrorWhenОnСreditCardWithInvalidCardNumber() {
-        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        creditPage.verifyDeclinePayVisibility();
-    }
-
-    @Test
-    @DisplayName("Should get MySQL status when pay on credit from APPROVED card")
-    void shouldGetMySQLStatusWhenPayOnCreditFromApprovedCard() {
-        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        var creditStatus = SQLHelper.getCreditStatus();
-        Assertions.assertEquals("APPROVED", creditStatus);
-
-    }
-
-    @Test
-    @DisplayName("Should get MySQL status when pay on credit from DECLINED card")
-    void shouldGetMySQLStatusWhenPayOnCreditFromDeclinedCard() {
-        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        var creditStatus = SQLHelper.getCreditStatus();
-        Assertions.assertEquals("DECLINED", creditStatus);
-
-    }
-
-    @Test
-    @DisplayName("Should get PostgreSQL status when pay on credit from APPROVED card")
-    void shouldGetPostgreSQLStatusWhenPayOnCreditFromApprovedCard() {
-        var cardInfo = DataHelper.getFirstCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        var creditStatus = SQLHelper.getCreditStatus();
-        Assertions.assertEquals("APPROVED", creditStatus);
-
+    @AfterEach
+    public void deleteDB() {
+        SqlHelper.deleteDataBase();
     }
     @Test
-    @DisplayName("Should get PostgreSQL status when pay on credit from DECLINED card")
-    void shouldGetPostgreSQLStatusWhenPayOnCreditFromDeclinedCard() {
-        var cardInfo = DataHelper.getSecondCardNumberAndStatus();
-        var creditPage = MainPage.openCreditPage(cardInfo);
-        creditPage.validPayCardAndInValidPayCard(cardInfo);
-        var creditStatus = SQLHelper.getCreditStatus();
-        Assertions.assertEquals("DECLINED", creditStatus);
-
+    void shouldSuccessfulPurchaseByCredit() {         // Покупка тура в кредит со статусом "APPROVED"
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getApprovedCard());
+        payment.expectationOperationApproved();
+        assertEquals("APPROVED", SqlHelper.getCreditPaymentStatus());
     }
-
+    @Test
+    void shouldPurchaseByCardDeclined() {            // Покупка тура в кредит со статусом "DECLINED"
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDeclinedCard());
+        payment.expectationError();
+        assertEquals("DECLINED", SqlHelper.getCreditPaymentStatus());
+    }
+    @Test
+    void shouldByPaymentEmptyForm() {              // Пустая форма
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getEmptyForm());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentLastMonth() {           // Прошедший месяц
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDateLastMonth());
+        payment.expectationInvalidDataCard();
+        assertEquals("Неверно указан срок действия карты", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentNonExistentMonth() {          // Не существующий месяц
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDateNonExistentMonth());
+        payment.expectationInvalidDataCard();
+        assertEquals("Неверно указан срок действия карты", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentOneSymbolInMonth() {          // Одна цифра в месяце
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDateOneSymbolIntMonth());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentPastYear() {          // Прошлый год
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDatePastYear());
+        payment.expectationCardExpired();
+        assertEquals("Истёк срок действия карты", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentNextYear() {          // Год не входящий в диапазон валидных (+6)
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDateNextYear());
+        payment.expectationInvalidDataCard();
+        assertEquals("Неверно указан срок действия карты", payment.getInvalidText());
+    }
+    @Test
+    void shouldByPaymentOneSymbolInYear() {          // Одна цифра при указании года
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getDateOneSymbolIntYear());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterNameCyrillic() {        //Ввод имени на кириллице
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getNameCyrillic());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterSpecialSymbol() {        //Ввод в поле спец-символов
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getNameSpecialSymbol());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterNumbers() {        //Ввод в поле "Имя" цифры
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getNameNumbers());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterManySymbol() {        //Ввод в поле "Имя" >64 символов
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getNameManySymbol());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterCard15Numbers() {        //Ввод в поле "Номер карты" 15 цифр
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getCard15Numbers());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterCardAllZero() {        //Ввод в поле "Номер карты" все 0
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getCardAllZero());
+        payment.expectationError();
+        // assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterCvcAllZero() {        //Ввод в поле "CVC" все 0
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getCvcAllZero());
+        payment.expectationError();
+        // assertEquals("Неверный формат", payment.getInvalidText());
+    }
+    @Test
+    void shouldByEnterCvcOneNumber() {        //Ввод в поле "CVC" одну цифру
+        var mainPage = new MainPage();
+        mainPage.openCreditPage();
+        var payment = new CreditPage();
+        payment.completedForm(DataHelper.getCvcOneNumber());
+        payment.expectationInvalidFormat();
+        assertEquals("Неверный формат", payment.getInvalidText());
+    }
 }
